@@ -35,6 +35,13 @@ MuseScore {
       version:  "3.0"
       description: "This plugin will take your notes and turn them into tone rows."
       menuPath: "Plugins.Notes.Serializer"
+      
+       Component.onCompleted: {
+         if (mscoreMajorVersion >= 4) {
+           title = qsTr("Serializer");
+           categoryCode = "composing-arranging-tools";
+        }
+      }
 
       property variant black : "#000000"
 	  property variant red : "#ff0000"
@@ -87,7 +94,8 @@ MuseScore {
                                     for (var i = 0; i < notes.length; i++) {
                                           var note = notes[i];
                                           if  (note_list.length > 0){
-                                            if (note_list.includes(note.pitch%12)){
+                                         //   if (note_list.includes(note.pitch%12)){
+                                              if (note_list.indexOf(note.pitch % 12) !== -1) {
                                               for (var j = 0; j < note_list.length; j++){
                                                 if (note_list[j]  == note.pitch%12){
                                                   tone_row.push(note_list[j])
@@ -203,13 +211,18 @@ MuseScore {
       }
 
       onRun: {
+      
+          curScore.startCmd()
+          
             console.log("Serializer");
 
             if (typeof curScore === 'undefined')
-                  Qt.quit();
+                  quit();
 
             applyToNotesInSelection()
+            
+            curScore.endCmd()     
 
-            Qt.quit();
+            quit();
          }
 }
